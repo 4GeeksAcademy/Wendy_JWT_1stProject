@@ -5,8 +5,9 @@ import { Link, useNavigate } from "react-router-dom";
 import { AppContext } from "../layout";
 
 export const Login = () => {
-    const [userN, setUserN] = useState('')
-    const [userLabel, setUserLabel] = useState(['Username', 'Email','Password', 'Log in'])
+  
+    const [userLabel, setUserLabel] = useState(['Username', 'Email','Password', 'Log in',"Don't have an account? click here"])
+    const [userE, setUserE] = useState('')
     const [userU, setUserU] = useState('')
     const [userP, setUserP] = useState('')
   
@@ -20,7 +21,7 @@ export const Login = () => {
 
 
     function createNewUser(){
-        let test= [' Create Username', 'Create Email',' Create Password', 'Create Account'];
+        let test= [' Create Username', 'Create Email',' Create Password', 'Create Account', "Maybe I have an account Log in"];
         setUserLabel(test)
 
 
@@ -34,7 +35,7 @@ export const Login = () => {
     
     function get_email(val) {
         let test = val.target.value;
-        setUserN(test)
+        setUserE(test)
     }
 
     function get_password(val) {
@@ -46,16 +47,19 @@ export const Login = () => {
     function login_function() {
         if(userLabel[0]=='Username'){
 
-        if (userN.length > 5 && userP.length >5) {
+        if (userE.length > 5 && userP.length >5) {
 
-        let test= [userN,userP]
+        let log_request= [userE,userP]
       
         
-        fetch(process.env.BACKEND_URL + "/api/user/login", {
+        fetch(process.env.BACKEND_URL + 'api/user/login', {
                 method: 'POST',
-                body: JSON.stringify(test), 
+          
+                body: JSON.stringify(log_request), 
+              //  Authorization: 'JWT '+token,
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                   
                 }
             })
                 .then(res => {
@@ -63,29 +67,34 @@ export const Login = () => {
                     return res.json();
                 })
                 .then(response => {
-                    context.setCurrentUser(response);
-                    navigate('/')
+                    //let test_log_info= 
+                   // context.setCurrentUser(response);
+                  
+                  console.log(response)
+                  localStorage.setItem("jwt-token",response.token)
+                   navigate('/home')
+                 
                 
                 } )
-                .catch(error => alert(error));    
+                .catch(error => console.log(error));    
            
         }
 
         else {
             alert('Please enter a valid username and/or password')
-            setUserN('')
-            setUserP('')
+          //  setUserE('')
+          //  setUserP('')
         }
     }
     else{
-        let test=['Username', 'Email','Password', 'Log in'];
+        let test=['Username', 'Email','Password', 'Log in', "Don't have an account? click here"];
         setUserLabel(test)
-        if (userN.length > 5 && userP.length >5 && userU.length>5) {
+        if (userE.length > 5 && userP.length >5 && userU.length>5) {
             fetch_newUser();
         }
         else {
             alert('Please enter a valid username, email and/or password')
-            setUserN('')
+            setUserE('')
             setUserP('')
             setUserU('')
         }
@@ -96,8 +105,8 @@ export const Login = () => {
     }
 function fetch_newUser(){
    
-		let testArray = [userU,userN,userP];
-		fetch('', {
+		let testArray = [userU,userE,userP];
+		fetch(process.env.BACKEND_URL + "/api/user/new", {
 			method: 'POST',
 			body: JSON.stringify(testArray),
 			headers: {
@@ -126,26 +135,26 @@ function fetch_newUser(){
                
                 <h3>Login Here</h3>
          
-                <form>
+                
                 
                <label htmlFor="username" style={userLabel[0]=='Username'? {display:'none' } : {display:'block' }}>{userLabel[0]}</label>
                <input type="" placeholder="username" style={userLabel[0]=='Username'? {display:'none' } : {display:'block' }} value={userU} id="username" onChange={(e) => get_username(e)} />
 
                 <label htmlFor="email">{userLabel[1]}</label>
-                <input type="text" placeholder="Email or Phone" value={userN} id="email" onChange={(e) => get_email(e)} />
+                <input type="text" placeholder="Email or Phone" value={userE} id="email" onChange={(e) => get_email(e)} />
 
                 <label for="password">{userLabel[2]}</label>
                 <input type="password" placeholder="Password" value={userP} id="password" onChange={(e) => get_password(e)} />
                
-
                 <button onClick={() => login_function()}>{userLabel[3]}</button>
-              <span onClick={()=>createNewUser()} id='newaccount_text'>  <p  >Don't have an account? click here</p></span>
+
+              <span onClick={()=>createNewUser()} id='newaccount_text'>  <p style={{textDecoration:'underline'}}>{userLabel[4]}</p></span>
                 <div className="social">
                     <div className="go"><i className="fab fa-google"></i>  Google</div>
                     <div className="fb"><i className="fab fa-facebook"></i>  Facebook</div>
                 </div>
           
-                </form>
+                
         </div>
     );
 }
