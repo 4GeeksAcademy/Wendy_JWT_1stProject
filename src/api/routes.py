@@ -20,3 +20,44 @@ def handle_hello():
     }
 
     return jsonify(response_body), 200
+
+
+
+@api.route('/user/login', methods=['POST'])
+def login_test():
+        request_body=request.json
+        
+        test_user= User.query.filter_by(email=request_body[0]).first().id
+        
+        if(test_user):
+            test_password= User.query.filter_by(email=request_body[0]).first().password
+            test_name= User.query.filter_by(email=request_body[0]).first().name
+           
+            if str(test_password)==request_body[1]:  
+                test=[test_user, test_name]   
+                    
+                return jsonify(test)
+            else:
+                return jsonify(f"Incorrect email or password"), 400
+                 
+                       
+        else:
+              return jsonify(f"Incorrect email or password"), 400
+        
+
+
+@api.route('/user/new', methods=['POST'])
+def add_newuser():
+        request_body=request.json
+        
+        test_user= User.query.filter_by(email=request_body[1]).first()
+    
+        if(test_user):
+             return jsonify(f"User already exists"), 500
+        
+        else:
+             newU=User ( name=request_body[0], email=request_body[1],password= request_body[2] )
+             db.session.add(newU)
+             db.session.commit()
+             return jsonify(f"Success"), 200
+
