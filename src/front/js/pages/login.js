@@ -10,6 +10,7 @@ export const Login = () => {
     const [userE, setUserE] = useState('')
     const [userU, setUserU] = useState('')
     const [userP, setUserP] = useState('')
+    const [userP2, setUserP2] = useState('')
   
     const navigate = useNavigate();
     const context = useContext(AppContext);
@@ -21,9 +22,15 @@ export const Login = () => {
 
 
     function createNewUser(){
-        let test= [' Create Username', 'Create Email',' Create Password', 'Create Account', "Maybe I have an account Log in"];
-        setUserLabel(test)
+        if(userLabel[0]=='Username'){
+            let test= [' Create Username', 'Create Email',' Create Password', 'Create Account', "Maybe I have an account Log in"];
+            setUserLabel(test)
+        }
+        else{
+            let test=['Username', 'Email','Password', 'Log in', "Don't have an account? click here"];
+            setUserLabel(test)
 
+        }
 
     }
 
@@ -42,6 +49,10 @@ export const Login = () => {
         let test = val.target.value;
         setUserP(test)
     }
+    function get_password2(val) {
+        let test = val.target.value;
+        setUserP2(test)
+    }
 
 
     function login_function() {
@@ -56,7 +67,7 @@ export const Login = () => {
                 method: 'POST',
           
                 body: JSON.stringify(log_request), 
-              //  Authorization: 'JWT '+token,
+             
                 headers: {
                     'Content-Type': 'application/json',
                    
@@ -67,12 +78,14 @@ export const Login = () => {
                     return res.json();
                 })
                 .then(response => {
-                    //let test_log_info= 
-                   // context.setCurrentUser(response);
+                
                   
                   console.log(response)
                   localStorage.setItem("jwt-token",response.token)
-                   navigate('/home')
+                  let test= [0,'Log out '+response.email];
+                  context.setCurrentUser(test);
+                  navigate('/')
+                   
                  
                 
                 } )
@@ -89,14 +102,17 @@ export const Login = () => {
     else{
         let test=['Username', 'Email','Password', 'Log in', "Don't have an account? click here"];
         setUserLabel(test)
-        if (userE.length > 5 && userP.length >5 && userU.length>5) {
+
+        if (userE.length > 5 && userP.length >5 && userU.length>5 && userP==userP2) {
             fetch_newUser();
         }
         else {
             alert('Please enter a valid username, email and/or password')
             setUserE('')
-            setUserP('')
             setUserU('')
+            setUserP('')
+            setUserP2('')
+            
         }
 
        
@@ -135,7 +151,7 @@ function fetch_newUser(){
                
                 <h3>Login Here</h3>
          
-                
+     
                 
                <label htmlFor="username" style={userLabel[0]=='Username'? {display:'none' } : {display:'block' }}>{userLabel[0]}</label>
                <input type="" placeholder="username" style={userLabel[0]=='Username'? {display:'none' } : {display:'block' }} value={userU} id="username" onChange={(e) => get_username(e)} />
@@ -145,6 +161,7 @@ function fetch_newUser(){
 
                 <label for="password">{userLabel[2]}</label>
                 <input type="password" placeholder="Password" value={userP} id="password" onChange={(e) => get_password(e)} />
+                <input type="password"  style={userLabel[0]=='Username'? {display:'none' } : {display:'block' }}  placeholder="Confirm Password" value={userP2} id="password2" onChange={(e) => get_password2(e)} />
                
                 <button onClick={() => login_function()}>{userLabel[3]}</button>
 
@@ -153,7 +170,7 @@ function fetch_newUser(){
                     <div className="go"><i className="fab fa-google"></i>  Google</div>
                     <div className="fb"><i className="fab fa-facebook"></i>  Facebook</div>
                 </div>
-          
+             
                 
         </div>
     );

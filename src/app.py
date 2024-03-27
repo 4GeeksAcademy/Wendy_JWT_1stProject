@@ -6,14 +6,10 @@ from flask import Flask, request, jsonify, url_for, send_from_directory
 from flask_migrate import Migrate
 from flask_swagger import swagger
 from api.utils import APIException, generate_sitemap
-from api.models import db
+from api.models import db, User
 from api.routes import api
 from api.admin import setup_admin
 from api.commands import setup_commands
-from flask_jwt_extended import JWTManager
-from flask_jwt_extended import create_access_token
-from flask_jwt_extended import get_jwt_identity
-from flask_jwt_extended import jwt_required
 from flask_jwt_extended import JWTManager
 
 
@@ -77,6 +73,15 @@ def serve_any_other_file(path):
     return response
 
 
+
+
+@app.route('/user/all', methods=['GET'])
+def get_all_user():
+        
+       
+        all_user= User.query.all()
+        user_list= list(map(lambda x: x.serialize(), all_user))
+        return jsonify(user_list) 
 
 
 # this only runs if `$ python src/main.py` is executed

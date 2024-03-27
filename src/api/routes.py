@@ -8,7 +8,7 @@ from flask_cors import CORS
 from flask_jwt_extended import create_access_token
 from flask_jwt_extended import get_jwt_identity
 from flask_jwt_extended import jwt_required
-from flask_jwt_extended import JWTManager
+
 
 
 api = Blueprint('api', __name__)
@@ -37,21 +37,22 @@ def login_test():
         
         if(test_user):
             test_email= User.query.filter_by(email=request_body[0]).first().email
+            test_name= User.query.filter_by(email=request_body[0]).first().name
             test_password= User.query.filter_by(email=request_body[0]).first().password
             
 
              
             if test_password == request_body[1]:  
-                test=[test_user,test_email]   
+                 
                 #Create a new token with the user id inside
                 access_token = create_access_token(identity=test_user)
-                return jsonify({ "token": access_token, "user_email": test_email})
+                return jsonify({ "token": access_token, "email": test_name})
             else:
-                return jsonify(f"Incorrect email or password")
+                return jsonify("Incorrect email or password"),401
                  
                        
         else:
-              return jsonify(f"Incorrect email or password")
+              return jsonify("Incorrect email or password"),401
 
 
 
@@ -61,12 +62,10 @@ def login_test():
 def protected():
     # Access the identity of the current user with get_jwt_identity
     current_user = get_jwt_identity()
-    user = User.query.get(current_user)
-    if user :
-         return jsonify('Youre good to go', user), 200   
-    else:
-         return jsonify('something is wrong')
-    
+    #user = User.query.get(current_user)
+   
+    return jsonify("You're good to go", current_user), 200   
+   
     #return jsonify({"id": user.id, "username": user.username }), 200
      
 
@@ -85,4 +84,13 @@ def add_newuser():
              db.session.add(newU)
              db.session.commit()
              return jsonify(f"Success"), 200
+        
 
+
+@api.route('/user/all', methods=['GET'])
+def get_all_user():
+        
+       
+        all_user= User.query.all()
+        return jsonify(all_user) 
+        

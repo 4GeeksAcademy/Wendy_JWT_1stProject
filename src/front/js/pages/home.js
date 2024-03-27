@@ -1,30 +1,41 @@
 import React, { useContext } from "react";
 import { Context } from "../store/appContext";
-import rigoImageUrl from "../../img/rigo-baby.jpg";
+
 import "../../styles/home.css";
+import { useNavigate } from "react-router-dom";
+import { AppContext } from "../layout";
 
 export const Home = () => {
-	const { store, actions } = useContext(Context);
+const { store, actions } = useContext(Context);
+const navigate= useNavigate();
+const context = useContext(AppContext);
 
+function log_out(){
+	localStorage.clear();
+	console.log('Local storage has been cleared');
+	let test= [0,'Log in '];
+	context.setCurrentUser(test);
+	
+}
 
 function test_JWT_function(){
 	const token = localStorage.getItem('jwt-token');
+	 const context = useContext(AppContext);
 
 	fetch(process.env.BACKEND_URL + "api/test/protected", {
 		method: 'GET',
 		headers: {
-			'Content-Type': 'application/json',
+			//'Content-Type': 'application/json',
 			'Authorization': 'Bearer ' + token
 		}
 	})
 		.then(res => {
-			if (!res.ok){ 
-				throw Error(res.statusText);
-			}
-			else if(res.status === 403) {
-				throw Error("Missing or invalid token");
+			 if(res.status === 401) {
+			alert("Please log in to see your cart");
+			navigate('/login')
+			//alert('Not today')
 		   } else {
-			   throw Error("Unknown error");
+			return res.json()
 		   }
 		})
 		.then(response => console.log('Success:', response))
@@ -35,7 +46,8 @@ function test_JWT_function(){
 
 	return (
 		<div className="text-center mt-5">
-		<button type="button" class="btn btn-primary" onClick={()=>test_JWT_function()}>Test Private routes</button>
+		<button type="button" className="btn btn-primary" onClick={()=>test_JWT_function()}>My favorites</button> 
+		<button type="button" className="btn btn-danger" onClick={()=>log_out()}>{context.currentUser[1]}</button> 
 		
 		</div>
 	);
