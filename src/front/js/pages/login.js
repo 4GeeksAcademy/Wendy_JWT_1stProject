@@ -54,6 +54,10 @@ export const Login = () => {
         setUserP2(test)
     }
 
+    function block_submit_behavior(val){
+            val.preventDefault();
+    }
+
 
     function login_function() {
         if(userLabel[0]=='Username'){
@@ -151,7 +155,7 @@ function fetch_newUser(){
                
                 <h3>Login Here</h3>
          
-     
+     <form onSubmit={(e)=>block_submit_behavior(e)}>
                 
                <label htmlFor="username" style={userLabel[0]=='Username'? {display:'none' } : {display:'block' }}>{userLabel[0]}</label>
                <input type="" placeholder="username" style={userLabel[0]=='Username'? {display:'none' } : {display:'block' }} value={userU} id="username" onChange={(e) => get_username(e)} />
@@ -171,7 +175,7 @@ function fetch_newUser(){
                     <div className="fb"><i className="fab fa-facebook"></i>  Facebook</div>
                 </div>
              
-                
+                </form>
         </div>
     );
 }

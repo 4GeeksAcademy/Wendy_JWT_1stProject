@@ -2,7 +2,6 @@ import React, { createContext, useState } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import ScrollToTop from "./component/scrollToTop";
 import { BackendURL } from "./component/backendURL";
-import { my_JWT_function } from "./component/helpers";
 
 import { Home } from "./pages/home";
 import { Demo } from "./pages/demo";

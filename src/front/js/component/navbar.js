@@ -1,6 +1,5 @@
 import React, { useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { my_JWT_function } from "./helpers";
 import { Context } from "../store/appContext";
 import "../../styles/home.css";
 
@@ -44,8 +43,6 @@ export const Navbar = () => {
   </Link>
 
   {/* <form className="form-inline"> */}
-
-    {/* <input className="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search"/> */}
 
     <button className="btn btn-outline-success my-2 my-sm-0" type="submit" onClick={()=>test_JWT_function2()}>My Cart</button>
 
